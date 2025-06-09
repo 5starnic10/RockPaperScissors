@@ -1,0 +1,107 @@
+package projects.rockpaperscissors;
+
+import javax.swing.*;         
+import java.awt.*;            
+import java.awt.event.*;      
+
+public class RockPaperScissorsGUI extends JFrame implements ActionListener {
+
+    /**
+	 * Serial id
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private GameLogic gameLogic;
+    private JButton rockButton, paperButton, scissorsButton, resetButton;
+    private JLabel resultLabel, scoreLabel;
+
+    public RockPaperScissorsGUI() {
+        gameLogic = new GameLogic();
+
+        setTitle("Rock, Paper, Scissors");
+        setSize(400, 300);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Buttons
+        rockButton = new JButton("Rock");
+        paperButton = new JButton("Paper");
+        scissorsButton = new JButton("Scissors");
+        resetButton = new JButton("Reset");
+
+        JPanel panel = new JPanel();
+        panel.add(rockButton);
+        panel.add(paperButton);
+        panel.add(scissorsButton);
+        panel.add(resetButton);
+        add(panel, BorderLayout.CENTER);
+
+        // Labels
+        resultLabel = new JLabel("Choose rock, paper, or scissors.", SwingConstants.CENTER);
+        scoreLabel = new JLabel("You: 0 | Computer: 0 | Rounds Left: 5", SwingConstants.CENTER);
+        add(resultLabel, BorderLayout.NORTH);
+        add(scoreLabel, BorderLayout.SOUTH);
+
+        // Add listeners
+        rockButton.addActionListener(this);
+        paperButton.addActionListener(this);
+        scissorsButton.addActionListener(this);
+        resetButton.addActionListener(this);  // add listener to reset button
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == resetButton) {
+            gameLogic.resetGame(); // restart the game
+            enableButtons(true);
+            resultLabel.setText("Game reset! Choose rock, paper, or scissors.");
+            scoreLabel.setText("You: 0 | Computer: 0 | Rounds Left: 5");
+            return;
+        }
+
+        if (gameLogic.isGameOver()) {
+            resultLabel.setText("Game over! Click Reset to play again.");
+            enableButtons(false);
+            return;
+        }
+
+        String userChoice = "";
+        if (e.getSource() == rockButton) {
+            userChoice = "rock";
+        } else if (e.getSource() == paperButton) {
+            userChoice = "paper";
+        } else if (e.getSource() == scissorsButton) {
+            userChoice = "scissors";
+        }
+
+        if (!userChoice.isEmpty()) {
+            String compChoice = gameLogic.getComputerMove();
+            String result = gameLogic.decideWinner(userChoice, compChoice);
+
+            resultLabel.setText("You chose " + userChoice + ". Computer chose " + compChoice + ". " + result);
+
+            // Update score with turns left
+            scoreLabel.setText("You: " + gameLogic.getUserScore()
+                    + " | Computer: " + gameLogic.getCompScore()
+                    + " | Rounds Left: " + gameLogic.getTurnsLeft());
+
+            if (gameLogic.isGameOver()) {
+                resultLabel.setText("Final Round! " + result + " Game Over.");
+                enableButtons(false);
+            }
+        }
+    }
+
+    // Helper to enable/disable play buttons
+    private void enableButtons(boolean enabled) {
+        rockButton.setEnabled(enabled);
+        paperButton.setEnabled(enabled);
+        scissorsButton.setEnabled(enabled);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(RockPaperScissorsGUI::new);
+    }
+}
