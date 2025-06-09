@@ -1,0 +1,63 @@
+package projects.rockpaperscissors;
+
+import java.util.Random;
+/**
+ * Helper class
+ */
+public class GameLogic {
+
+	private Random rand = new Random();
+	private int userScore = 0;
+	private int compScore = 0;
+	private int turnsLeft = 5;
+	private String result = "";
+	
+	public String getComputerMove() {
+		int random = rand.nextInt(3);
+		if (random == 0)
+			return "rock";
+		if (random == 1)
+			return "paper";
+		return "scissors";
+	}
+
+	public String decideWinner(String player, String computer) {
+		if (player.equals(computer)) {
+            result = "It's a tie! You both chose " + player + ".";
+        } else if ((player.equals("rock") && computer.equals("scissors")) ||
+                   (player.equals("paper") && computer.equals("rock")) ||
+                   (player.equals("scissors") && computer.equals("paper"))) {
+            userScore++;
+            result = "You win! Computer chose " + computer + ".";
+        } else {
+            compScore++;
+            result = "You lose! Computer chose " + computer + ".";
+        }
+
+        turnsLeft--;
+        return result;
+    }
+
+    public int getUserScore() {
+        return userScore;
+    }
+
+    public int getCompScore() {
+        return compScore;
+    }
+
+    public int getTurnsLeft() {
+        return turnsLeft;
+    }
+
+    public boolean isGameOver() {
+        return turnsLeft <= 0;
+    }
+
+    public void resetGame() {
+        userScore = 0;
+        compScore = 0;
+        turnsLeft = 5;
+    }
+
+}
